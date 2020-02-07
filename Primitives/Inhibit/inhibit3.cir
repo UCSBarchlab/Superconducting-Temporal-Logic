@@ -1,0 +1,148 @@
+#! Inhibit Circuit
+
+* Testbench
+.tran 1p 0.8n
+.options ysep
+R0 7 2 100
+R1 8 4 100
+V0 VCC 0 pwl 0 0 10p 10m
+
+* Input Logic Pulses
+V1 7 0 pulse 0 50m 550p 50p 50p 100p 800p
+V2 8 0 pulse 0 50m 50p 50p 50p 100p 300p
+
+* Macroscopic Inhibit Circuit
+X0 2 a VCC dcsfq
+X3 4 b VCC dcsfq
+X2 a b OUT VCC inv
+
+* RSFQ Pulse Generation
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+
+L0 12 0 3.58pH
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+
+R0 VBIAS 8 27
+.ends dcsfq
+
+* T-Flip Flop Element
+.subckt tff_il IN OUT VBIAS
+B0 10 9 23 jjr ics=200uA
+RS0 10 9 3.4
+B1 9 11 24 jjr ics=300uA
+RS1 9 11 2.3
+B2 12 14 25 jjr ics=250uA
+RS2 12 14 2.7
+B3 13 15 26 jjr ics=250uA
+RS3 13 15 2.7
+B4 16 17 27 jjr ics=250uA
+RS4 16 17 2.7
+B5 18 17 28 jjr ics=150uA
+RS5 18 17 4.6
+B6 19 21 29 jjr ics=200uA
+RS6 19 21 3.4
+B7 20 22 30 jjr ics=250uA
+RS7 20 22 2.7
+
+L0 4 7 4.52pH
+
+LP0 9 4 1.05pH
+LP1 11 0 0.17pH
+LP2 12 6 1.37pH
+LP3 13 5 1.00pH
+LP4 0 16 0.11pH
+LP5 14 0 0.20pH
+LP6 15 0 0.15pH
+LP7 17 7 1.16pH
+LP8 7 19 2.38pH
+LP9 8 20 1.26pH
+LP10 21 0 0.20pH
+LP11 22 0 0.20pH
+
+LT0 10 5 1.50pH
+LT1 IN 12 1.97pH
+LT2 6 13 1.87pH
+LT3 5 18 1.44pH
+LT4 19 8 3.09pH
+LT5 20 OUT 1.26pH
+
+R0 VBIAS 6 28
+R1 4 VBIAS 32
+R2 VBIAS 8 38
+.ends tff_il
+
+* Inverter Element
+.subckt inv 26 27 28 VBIAS
+B0 10 11 29 jjr ics=140uA
+RS0 10 11 4.9
+B1 9 15 30 jjr ics=250uA
+RS1 9 15 3.7
+B2 10 16 31 jjr ics=310uA
+RS2 10 16 2.2
+B3 12 17 32 jjr ics=174uA
+RS3 12 17 3.9
+B4 13 18 33 jjr ics=294uA
+RS4 13 18 2.3
+B5 14 19 34 jjr ics=355uA
+RS5 14 19 1.9
+B6 21 24 35 jjr ics=294uA
+RS6 21 24 2.3
+B7 23 25 36 jjr ics=264uA
+RS7 23 25 2.6
+
+L0 26 9 2pH
+L1 9 6 1.03pH
+L2 6 10 .97pH
+L3 11 12 .97pH
+L4 12 7 .33pH
+L5 7 13 5.88pH
+L6 8 13 1.3pH
+L7 14 8 1.02pH
+L8 27 14 .79pH
+L9 17 20 1.04pH
+L10 20 18 .57pH
+L11 20 21 .875pH
+L12 21 22 1.7pH
+L13 22 23 1.11pH
+L14 23 28 2.37pH
+
+LP0 3 6 .35pH
+LP1 4 7 .57pH
+LP2 5 8 .33pH
+LP3 15 0 .03pH
+LP4 16 0 .09pH
+LP5 19 0 .02pH
+LP6 2 22 .5pH
+LP7 24 0 .145pH
+LP8 25 0 .03pH
+
+R0 VBIAS 3 40
+R1 VBIAS 4 42
+R2 VBIAS 5 74
+R3 VBIAS 2 65
+.ends inv
+
+
+* Model Definition
+.model jjr jj(level=2)
+
+.tran 1p 0.8n
