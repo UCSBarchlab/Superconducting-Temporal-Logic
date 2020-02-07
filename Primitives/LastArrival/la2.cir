@@ -1,0 +1,82 @@
+#! Last Arrival Circuit
+
+* Testbench
+.tran 1p 0.8n
+.options ysep
+R0 6 2 100
+R1 7 5 100
+V0 VCC 0 pwl 0 0 10p 10m
+
+* Input Logic Pulses
+V1 6 0 pulse 0 50m 130p 50p 50p 100p 550p
+V2 7 0 pulse 0 50m 70p 50p 50p 100p 280p
+
+* Macroscopic Last-Arrival Circuit
+X0 2 IN1 VCC dcsfq
+X1 5 IN2 VCC dcsfq
+X2 IN1 IN2 OUT VCC larr
+
+
+* RSFQ Pulse Generation
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+L0 12 0 3.58pH
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+R0 VBIAS 8 27
+.ends dcsfq
+
+* Last-Arrival Element
+.subckt larr IN1 IN2 OUT VBIAS
+B0 8 0 13 jjr ics=360uA
+RS0 8 0 1.9
+B1 10 0 14 jjr ics=190uA
+RS1 10 0 3.6
+B2 9 0 15 jjr ics=260uA
+RS2 9 0 2.6
+B3 6 0 16 jjr ics=360uA
+RS3 6 0 1.9
+B4 12 0 17 jjr ics=190uA
+RS4 12 0 3.6
+B5 11 0 18 jjr ics=260uA
+RS5 11 0 2.6
+
+L0 9 5 1.42pH
+L1 11 7 1.42pH
+
+LT0 OUT 8 2.32pH
+LT1 IN1 10 2.13pH
+LT2 10 9 3.29pH
+LT3 5 6 3.29pH
+LT4 8 6 3.0pH
+LT5 IN2 12 2.13pH
+LT6 12 11 3.29pH
+LT7 7 6 3.29pH
+
+R0 VBIAS OUT 57
+R1 VBIAS IN1 57
+R2 VBIAS 5 56
+R3 VBIAS IN2 57
+R4 VBIAS 7 56
+.ends larr
+
+* Model Definition
+.model jjr jj(level=2)
+
+.tran 1p 0.8n
