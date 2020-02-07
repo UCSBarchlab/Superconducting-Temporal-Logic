@@ -1,0 +1,369 @@
+#! Decision Tree Accelerator
+
+* Testbench
+.tran 1p 0.3n
+.options ysep
+
+.control
+
+* 0-pt reference value at t=40p. x=1 means 40+1*20=60; x=2 means 40+2*20=80.
+* additional 5ps needed for path-balancing the x,y variables within the inverter.
+set Timestep=20p
+set Xval=125p
+*2 = 85p
+*4 = 125p
+set Yval=65p
+*3 = 105p
+*1 = 65p
+set Val0=40p
+set Val1=100p
+set Val2=80p
+.endc
+
+
+V0 VCC 0 pwl 0 0 10p 10m
+
+
+* Input Logic Pulses. Discrete time unit = 100ps.
+Vx 1 0 pulse 0 50m $Xval 50p 50p 100p 4n
+Vy 2 0 pulse 0 50m $Yval 50p 50p 100p 4n
+* Hard-coded 0 = 0 time units, reference point
+Vh0 6 0 pulse 0 50m $Val0 50p 50p 100p 4n
+* Hard-coded delay1 = 3 time units
+Vh1 3 0 pulse 0 50m $Val1 50p 50p 100p 4n
+* Hard-coded delay2 = 2 time units
+Vh2 4 0 pulse 0 50m $Val2 50p 50p 100p 4n
+* Hard-coded reset time = 5 time units. Circuit logic not expected to exceed this parameter.
+Vc 5 0 pulse 0 50m 140p 50p 50p 100p 4n
+
+
+* IN1
+R0 1 11 100
+* IN2
+R1 2 12 100
+* RAW reference value
+R5 6 16 100
+* RAW comparison value #1 (in this case, hard-coded '3')
+R2 3 13 100
+* RAW value #2 ('2')
+R3 4 14 100
+* UB
+R4 5 15 100 
+
+* Macroscopic Race Tree Circuit
+X0 11 IN1r VCC dcsfq
+x200 IN1r IN11r VCC jtls
+X202 IN11r IN1 VCC jtls2
+
+X1 12 IN2r VCC dcsfq
+X201 IN2r IN2r2 VCC jtls
+X203 IN2r2 IN2 VCC jtls2
+
+X2 13 RV11 VCC dcsfq
+X102 RV11 RV12 VCC jtl
+X103 RV12 RV13 VCC jtls
+X110 RV13 RV1 VCC jtls2
+
+X3 14 RV21 VCC dcsfq
+X104 RV21 RV22 VCC jtls
+X111 RV22 RV2 VCC jtls2
+
+X4 15 UBr VCC dcsfq
+X105 UBr UBr2 VCC jtls
+X112 UBr2 UB VCC jtls2
+
+X100 16 REFr VCC dcsfq
+X101 REFr REFr2 VCC jtls
+X107 REFr2 REF VCC jtls2
+X106 REF REF2 VCC jtl
+
+
+* Inhibit stage, sorts hard-coded
+X5 IN1 IN1s1 IN1s2 VCC split
+X6 RV2 RV2s1 RV2s2 VCC split
+X7 RV1 IN1s1 MD1 VCC inv
+X8 RV2s1 IN1s2 MD2 VCC inv
+X9 RV2s2 IN2 MD3 VCC inv
+
+* Inv has ~10ps delay, so add x JTLs to balance
+* jtl = 5-6ps
+* split = ~10ps, 2xjtl
+* inv = ~14ps, 2xjtl
+
+Xclk1 UB CLK1 CLK2 VCC split
+Xclk2 CLK1 CLK3 CLK4 VCC split
+Xclk3 CLK3 CLK5 CLK6 VCC split
+
+* split MD1 > 1 to 6 jtl to LA A
+*           > 2 to split > 1 to 4 jtl to LA B
+*                        > 2 to inv to split > 1 to LA C
+*                                            > 2 to LA D
+X10 MD1 MD1s1 MD1s2 VCC split
+X11 MD1s1 MD1s11 VCC jtl
+X12 MD1s11 MD1s12 VCC jtl
+X13 MD1s12 MD1s13 VCC jtl
+X14 MD1s13 MD1s14 VCC jtl
+X15 MD1s14 MD1s15 VCC jtl
+X16 MD1s15 MD1s16 VCC jtl
+* out to LA A
+
+X17 MD1s2 MD1s2s1 MD1s2s2 VCC split
+X18 MD1s2s1 MD1s2s11 VCC jtl
+X19 MD1s2s11 MD1s2s12 VCC jtl
+X20 MD1s2s12 MD1s2s13 VCC jtl
+X21 MD1s2s13 MD1s2s14 VCC jtl
+* out to LA B
+
+X22 MD1s2s2 CLK2 MD1s2s2i VCC inv
+X23 MD1s2s2i MD1s2s21 MD1s2s22 VCC split
+* out to LA C, D
+
+* split MD2 > 1 to 6 jtl to LA A
+*           > 2 to inv to 4 jtl to LA B
+X30 MD2 MD2s1 MD2s2 VCC split
+X31 MD2s1 MD2s11 VCC jtl
+X32 MD2s11 MD2s12 VCC jtl
+X33 MD2s12 MD2s13 VCC jtl
+X34 MD2s13 MD2s14 VCC jtl
+X210 MD2s14 MD2s15 VCC jtl
+X211 MD2s15 MD2s16 VCC jtl
+* out to LA A
+
+X37 MD2s2 CLK4 MD2s2i VCC inv
+X38 MD2s2i MD2s21 VCC jtl
+X39 MD2s21 MD2s22 VCC jtl
+X40 MD2s22 MD2s23 VCC jtl
+X41 MD2s23 MD2s24 VCC jtl
+* out to LA B
+
+* split MD3 > 1 to 6 jtl to LA C
+*           > 2 to inv to 4 jtl to LA D
+X50 MD3 MD3s1 MD3s2 VCC split
+X51 MD3s1 MD3s11 VCC jtl
+X52 MD3s11 MD3s12 VCC jtl
+X53 MD3s12 MD3s13 VCC jtl
+X54 MD3s13 MD3s14 VCC jtl
+X55 MD3s14 MD3s15 VCC jtl
+X56 MD3s15 MD3s16 VCC jtl
+* out to LA C
+
+X57 MD3s2 CLK6 MD3s2i VCC inv
+X58 MD3s2i MD3s21 VCC jtl
+X59 MD3s21 MD3s22 VCC jtl
+X60 MD3s22 MD3s23 VCC jtl
+X61 MD3s23 MD3s24 VCC jtl
+* out to LA D
+
+
+* Synthesis of outputs
+X70 MD1s16 MD2s16 OUTA0 VCC larr
+X71 MD1s2s14 MD2s24 OUTB0 VCC larr
+X72 MD1s2s21 MD3s16 OUTC0 VCC larr
+X73 MD1s2s22 MD3s24 OUTD0 VCC larr
+
+X74 OUTA0 OUTA VCC jtl
+X75 OUTB0 OUTB VCC jtl
+X76 OUTC0 OUTC VCC jtl
+X77 OUTD0 OUTD VCC jtl
+
+
+* RSFQ Pulse Generation
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+
+L0 12 0 3.58pH
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+
+R0 VBIAS 8 27
+.ends dcsfq
+
+
+* Single JTL Circuit Element
+.subckt jtl IN OUT VBIAS
+B0 5 7 9 jjr ics=250uA
+RS0 5 7 2.7
+B1 6 8 10 jjr ics=250uA
+RS1 6 8 2.7
+
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+
+LT0 IN 5 2.1pH
+LT1 5 4 2.1pH
+LT2 4 6 2.1pH
+LT3 6 OUT 2.1pH
+
+R0 VBIAS 4 29
+.ends jtl
+
+
+* Single JTL Shaping Circuit Element
+.subckt jtls IN OUT VBIAS
+B0 5 7 9 jjr ics=300uA
+RS0 5 7 1.9
+B1 6 8 10 jjr ics=300uA
+RS1 6 8 1.9
+
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+
+LT0 IN 5 0.8pH
+LT1 5 4 1.5pH
+LT2 4 6 1.5pH
+LT3 6 OUT 0.8pH
+
+R0 VBIAS 4 17
+.ends jtls
+
+
+* Single JTL Shaping Circuit Element
+.subckt jtls2 IN OUT VBIAS
+B0 5 7 9 jjr ics=355uA
+RS0 5 7 1.9
+B1 6 8 10 jjr ics=355uA
+RS1 6 8 1.9
+
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+
+LT0 IN 5 0.8pH
+LT1 5 4 1.5pH
+LT2 4 6 1.5pH
+LT3 6 OUT 0.8pH
+
+R0 VBIAS 4 13.2
+.ends jtls2
+
+
+* Inverter Element
+.subckt inv 26 27 28 VBIAS
+B0 10 11 29 jjr ics=140uA
+RS0 10 11 4.9
+B1 9 15 30 jjr ics=250uA
+RS1 9 15 3.7
+B2 10 16 31 jjr ics=310uA
+RS2 10 16 2.2
+B3 12 17 32 jjr ics=174uA
+RS3 12 17 3.9
+B4 13 18 33 jjr ics=294uA
+RS4 13 18 2.3
+B5 14 19 34 jjr ics=355uA
+RS5 14 19 1.9
+B6 21 24 35 jjr ics=294uA
+RS6 21 24 2.3
+B7 23 25 36 jjr ics=264uA
+RS7 23 25 2.6
+
+L0 26 9 2pH
+L1 9 6 1.03pH
+L2 6 10 .97pH
+L3 11 12 .97pH
+L4 12 7 .33pH
+L5 7 13 5.88pH
+L6 8 13 1.3pH
+L7 14 8 1.02pH
+L8 27 14 .79pH
+L9 17 20 1.04pH
+L10 20 18 .57pH
+L11 20 21 .875pH
+L12 21 22 1.7pH
+L13 22 23 1.11pH
+L14 23 28 2.37pH
+
+LP0 3 6 .35pH
+LP1 4 7 .57pH
+LP2 5 8 .33pH
+LP3 15 0 .03pH
+LP4 16 0 .09pH
+LP5 19 0 .02pH
+LP6 2 22 .5pH
+LP7 24 0 .145pH
+LP8 25 0 .03pH
+
+R0 VBIAS 3 40
+R1 VBIAS 4 42
+R2 VBIAS 5 74
+R3 VBIAS 2 65
+.ends inv
+
+
+* Splitter Element
+.subckt split IN OUT1 OUT2 VBIAS
+B0 2 0 100 jjr ics=355uA
+R0 2 0 1.9
+B1 7 0 101 jjr ics=250uA
+R2 7 0 2.7
+B2 9 0 102 jjr ics=250uA
+R3 9 0 2.7
+
+L0 IN 1 0.8p
+L1 1 3 1.2p
+L2 3 5 0.05p
+L3 5 6 1.6p
+L4 6 OUT1 1.98p
+L5 5 8 1.6p
+L6 8 OUT2 1.98p
+
+LP0 1 2 0.05p
+LP1 4 3 0.13p
+LP2 6 7 0.05p
+LP3 8 9 0.05p
+
+R1 VBIAS 4 16.7
+.ends split
+
+
+* Last-Arrival Element
+.subckt larr IN1 IN2 OUT VBIAS
+B0 8 0 13 jjr ics=360uA
+RS0 8 0 1.9
+B1 10 0 14 jjr ics=190uA
+RS1 10 0 3.6
+B2 9 0 15 jjr ics=260uA
+RS2 9 0 2.6
+B3 6 0 16 jjr ics=360uA
+RS3 6 0 1.9
+B4 12 0 17 jjr ics=190uA
+RS4 12 0 3.6
+B5 11 0 18 jjr ics=260uA
+RS5 11 0 2.6
+
+L0 9 5 1.42pH
+L1 11 7 1.42pH
+
+LT0 OUT 8 2.32pH
+LT1 IN1 10 2.13pH
+LT2 10 9 3.29pH
+LT3 5 6 3.29pH
+LT4 8 6 3.0pH
+LT5 IN2 12 2.13pH
+LT6 12 11 3.29pH
+LT7 7 6 3.29pH
+
+R0 VBIAS OUT 57
+R1 VBIAS IN1 57
+R2 VBIAS 5 56
+R3 VBIAS IN2 57
+R4 VBIAS 7 56
+.ends larr
+
+* Model Definition
+.model jjr jj(level=2)
