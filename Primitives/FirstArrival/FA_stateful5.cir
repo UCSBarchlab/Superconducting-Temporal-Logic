@@ -1,0 +1,123 @@
+#! First Arrival Circuit.
+
+* Testbench
+.tran 1p 0.8n
+.options ysep
+R0 10 11 100
+R1 20 21 100
+R2 40 41 100
+V0 VCC 0 pwl 0 0 10p 10m
+
+* Input Logic Pulses
+V1 10 0 pulse 0 50m 450p 50p 50p 100p 700p
+V2 20 0 pulse 0 50m 400p 50p 50p 100p 700p
+* Reset Pulse
+V3 40 0 pulse 0 50m 10p 50p 50p 100p 300p
+
+* Macroscopic First-Arrival Circuit
+X0 11 12 VCC dcsfq
+X5 12 IN1 VCC jtl
+X1 21 22 VCC dcsfq
+X6 22 IN2 VCC jtl
+X2 IN1 IN2 MERGE VCC merge
+X3 41 CLK VCC dcsfq
+X4 CLK OUT MERGE VCC dff_il
+
+* RSFQ Pulse Generation
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+L0 12 0 3.58pH
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+R0 VBIAS 8 27
+.ends dcsfq
+
+
+* D-Flip Flop Element
+.subckt dff_il IN OUT CLK VBIAS
+B0 7 8 15 jjr ics=150uA
+RS0 7 8 4.6
+B1 10 9 16 jjr ics=175uA
+RS1 10 9 3.9
+B2 9 12 17 jjr ics=200uA
+RS2 9 12 3.4
+B3 8 13 18 jjr ics=250uA
+RS3 8 13 2.7
+B4 11 14 19 jjr ics=200uA
+RS4 11 14 3.4
+LP0 12 0 0.22pH
+LP1 13 0 0.50pH
+LP2 14 0 0.26pH
+LT0 CLK 7 2.31pH
+LT1 IN 10 2.50pH
+LT2 9 5 1.59pH
+LT3 5 8 5.48pH
+LT4 8 6 2.62pH
+LT5 6 11 1.24pH
+LT6 11 OUT 2.02pH
+R0 VBIAS 5 43
+R1 VBIAS 6 74
+.ends dff_il
+
+* Merge Element
+.subckt merge IN1 IN2 OUT VBIAS
+B0 6 7 16 jjr ics=250uA
+RS0 6 7 2.7
+B1 8 10 17 jjr ics=224uA
+*RS1 8 10 3.4
+B2 10 12 18 jjr ics=224uA
+*RS2 10 12 3.4
+B3 11 13 19 jjr ics=250uA
+RS3 11 13 2.7
+B4 14 15 20 jjr ics=250uA
+RS4 14 15 2.7
+L0 IN1 7 6pH
+L1 5 11 2.6pH
+L2 11 OUT 2pH
+L3 IN2 14 6pH
+LP0 0 6 .03pH
+LP1 7 8 .66pH
+LP2 9 5 .13pH
+LP3 10 5 .2pH
+LP4 12 14 .66pH
+LP5 13 0 .03pH
+LP6 15 0 .03pH
+R0 VBIAS 9 20
+.ends merge
+
+
+* Single JTL Circuit Element
+.subckt jtl IN OUT VBIAS
+B0 5 7 9 jjr ics=250uA
+RS0 5 7 2.7
+B1 6 8 10 jjr ics=250uA
+RS1 6 8 2.7
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+LT0 IN 5 2.1pH
+LT1 5 4 2.1pH
+LT2 4 6 2.1pH
+LT3 6 OUT 2.1pH
+R0 VBIAS 4 29
+.ends jtl
+
+* Model Definition
+.model jjr jj(level=2)
+
+.tran 1p 0.8n
