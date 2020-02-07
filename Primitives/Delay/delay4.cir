@@ -1,0 +1,70 @@
+#! Delay circuit
+
+.tran 1p 0.5n
+.options ysep
+R0 1 2 100
+V0 VCC 0 pwl 0 0 10p 10m
+
+* Input Logic Pulse
+V1 1 0 pulse 0 50m 20p 50p 50p 100p 300p
+
+* Macroscopic Circuit
+X0 2 IN VCC dcsfq
+X1 IN JTL1 VCC jtl
+X2 JTL1 JTL2 VCC jtl
+X3 JTL2 JTL3 VCC jtl
+X4 JTL3 JTL4 VCC jtl
+X5 JTL4 JTL5 VCC jtl
+
+* RSFQ Pulse Generation
+* RS = JJ damping shunts, using Stewart-McCumber parameter with B_c = 1
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+
+L0 12 0 3.58pH
+
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+
+R0 VBIAS 8 27
+.ends dcsfq
+
+* Single JTL Circuit Element
+.subckt jtl IN OUT VBIAS
+B0 5 7 9 jjr ics=250uA
+RS0 5 7 2.7
+B1 6 8 10 jjr ics=250uA
+RS1 6 8 2.7
+
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+
+LT0 IN 5 2.1pH
+LT1 5 4 2.1pH
+LT2 4 6 2.1pH
+LT3 6 OUT 2.1pH
+
+R0 VBIAS 4 29
+.ends jtl
+
+* JJ model definition
+.model jjr jj(level=2)
+
+.tran 1p 0.5n
