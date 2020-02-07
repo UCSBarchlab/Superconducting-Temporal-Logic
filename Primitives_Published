@@ -1,3 +1,39 @@
 # Primitive Super-RL Circuits
+# List of versions of all primitives published in the paper:
 
-File contains the source code for primitives published for ASPLOS 2020.
+File Author: J. V. (jevolk (at) ucsb.edu)
+Affiliation: UCSB, ECE Dep't and CS Dep't
+Date Created: 21 Jan 2020, 13:37:22 PST
+Last Modified: 21 Jan 2020, 13:54:39 PST
+
+
+Directory name: primitives_to_share_21Jan2020.zip
+Contents.....................................Description
+
+Coincidence_rewrite3_8.cir...................
+
+Delay_rewrite4.cir...........................5x serial JTLs.
+
+DFunction_rewrite11.cir......................DFunction with case 1 values (a=0, b=1, c=2).
+
+DFunction_rewrite11_output2.cir..............DFunction with case 2 values (a=1, b=0, c=inf).
+
+DNA_FAnos_rewrite2_act-act.cir...............DNA accelerator with stateless FA implementation. act-act string comparison.
+
+DNA_FAnos_rewrite2_act-gat.cir...............DNA accelerator with stateless FA implementation. act-gat string comparison.
+
+DNA_rewrite10_act-act.cir....................DNA accelerator with stateful FA implementation. act-act string comparison.
+
+DNA_rewrite10_gat-act.cir....................DNA accelerator with stateful FA implementation. act-gat string comparison.
+
+FA_rewrite_stateful_5.cir....................Stateful FA.
+
+FA_stateless_rewrite3.cir....................Stateless FA (AKA clocked 'AND').
+
+Inhibit_rewrite3.cir......................... aIb implementation.
+
+jj.so........................................model file, ideal parameters based on MITLL SFQ5EE process (text, supplied within WRSPICE installation).
+
+LA_rewrite2.cir..............................Last Arrival implementation.
+
+racetree_7.cir...............................Racetree accelerator with inputs x=4, y=1.
