@@ -1,0 +1,289 @@
+#! DNA Accelerator - GAT-ACT
+
+* Testbench
+.tran 1p 0.6n
+.options ysep
+
+
+V0 VCC 0 pwl 0 0 10p 10m
+* VNM = not match bias node. Or can just shunt to GND.
+V1 VNM 0 pwl 0 0 10p 0m
+
+* Input Logic Pulses.
+Vy 3 0 pulse 0 50m 150p 50p 50p 100p 4n
+* clock for single cell FA
+Vc 7 0 pulse 0 50m 20p 50p 50p 100p 1n
+
+
+* Input resistors convert voltage pulses to current
+R1 3 4 100
+Rc 7 8 100
+
+
+* Macroscopic DNA circuit
+
+* first, assume Vy = match from prev signal, others are 0
+* insert
+* "match" - the only active signal to start the circuit
+X1 4 IN1 VCC dcsfq
+* clock for resetting stateful FA
+X3 8 CLK VCC dcsfq
+
+
+
+* split clocks, no balancing
+X70 CLK CLK1 CLK2 VCC split
+X71 CLK1 CLK3 CLK4 VCC split
+X72 CLK3 CLK5 CLK6 VCC split
+X73 CLK5 CLK7 CLK8 VCC split
+X74 CLK7 CLK9 CLK10 VCC split
+X75 CLK9 CLK11 CLK12 VCC split
+X76 CLK11 CLK13 CLK14 VCC split
+X77 CLK13 CLK15 CLK16 VCC split
+X78 CLK15 CLK17 CLK18 VCC split
+X79 CLK17 CLK19 CLK20 VCC split
+X80 CLK19 CLK21 CLK22 VCC split
+X81 CLK21 CLK23 CLK24 VCC split
+X82 CLK23 CLK25 CLK26 VCC split
+X83 CLK25 CLK27 CLK28 VCC split
+X84 CLK27 CLK29 CLK30 VCC split
+X85 CLK29 CLK31 CLK32 VCC split
+
+
+
+* start cell circuit
+X11 IN2 IN1 IN3 lns11 MATCH11 DEL11 CLK2 VCC VNM cell
+X12 lns11 VNM VNM INS12 MATCH12 DEL12 CLK4 VCC VNM cell
+X13 INS12 VNM VNM INS13 MATCH13 DEL13 CLK6 VCC VNM cell
+X14 INS13 VNM VNM INS14 MATCH14 DEL14 CLK8 VCC VNM cell
+
+X21 VNM VNM DEL11 INS21 MATCH21 DEL21 CLK10 VCC VCC cell
+X31 VNM VNM DEL21 INS31 MATCH31 DEL31 CLK12 VCC VNM cell
+X41 VNM VNM DEL31 INS41 MATCH41 DEL41 CLK14 VCC VNM cell
+
+X22 INS21 MATCH11 DEL12 INS22 MATCH22 DEL22 CLK16 VCC VNM cell
+X23 INS22 MATCH12 DEL13 INS23 MATCH23 DEL23 CLK18 VCC VNM cell
+X24 INS23 MATCH13 DEL14 INS24 MATCH24 DEL24 CLK20 VCC VNM cell
+
+X32 INS31 MATCH21 DEL22 INS32 MATCH32 DEL32 CLK22 VCC VNM cell
+X33 INS32 MATCH22 DEL23 INS33 MATCH33 DEL33 CLK24 VCC VCC cell
+X34 INS33 MATCH23 DEL42 INS34 MATCH34 DEL34 CLK26 VCC VNM cell
+
+X42 INS41 MATCH31 DEL32 INS42 MATCH42 DEL42 CLK28 VCC VNM cell
+X43 INS42 MATCH32 DEL33 INS43 MATCH43 DEL43 CLK30 VCC VNM cell
+X44 INS43 MATCH33 DEL34 INS44 MATCH44 DEL44 CLK32 VCC VCC cell
+
+* take MATCH44 as output
+
+
+
+
+* Macroscopic DNA cell
+* I/O order: insert input, match input, delete input, insert output, ...
+* VCHOOSE controls whether the match propagates.
+
+.subckt cell INSI MATI DELI INSO MATO DELO CLK VBIAS VCHOOSE
+
+X0 MATI INSI IMI VBIAS merge
+* compensate for merge delay on DELI input
+X1 DELI DELI1 VBIAS jtl
+X2 DELI1 DELI2 VBIAS jtl
+
+* stateful first arrival - replace the following two lines with stateless merge if desired
+X7 IMI DELI2 OUT VBIAS merge
+X8 CLK FIRST OUT VBIAS dff_il
+
+X9 FIRST FIRST1 FIRST2 VBIAS split
+X10 FIRST1 MATCH DELO1 VBIAS split
+X11 DELO1 DELO VBIAS jtl
+* compensate for second split delay on FIRST2 signal
+X12 FIRST2 FIRST21 VBIAS jtl
+X13 FIRST21 INSO VBIAS jtl
+
+* If it's a match, VCHOOSE on
+X14 MATCH MATO VCHOOSE jtl
+
+.ends cell
+
+
+
+* Macroscopic First-Arrival Circuit
+.subckt fa IN1 IN2 CLK OUT VBIAS
+X2 IN1 IN2 MERGE VBIAS merge
+X4 CLK OUT MERGE VBIAS dff_il
+.ends
+
+* RSFQ Pulse Generation
+.subckt dcsfq IN OUT VBIAS
+B0 9 5 15 jjr ics=170uA
+RS0 9 5 4
+B1 10 11 16 jjr ics=250uA
+RS1 10 11 2.7
+B2 12 13 17 jjr ics=150uA
+RS2 12 13 4.6
+B3 7 14 18 jjr ics=170uA
+RS3 7 14 4
+
+L0 12 0 3.58pH
+LP0 8 6 0.08pH
+LP1 4 9 1.29pH
+LP2 5 6 1.13pH
+LP3 6 10 1.74pH
+LP4 5 7 0.21pH
+LP5 4 12 1.27pH
+LP6 11 0 0.13pH
+LP7 13 7 0.69pH
+LP8 14 0 0.18pH
+
+LT0 10 OUT 2.11pH
+LT1 IN 4 3.38pH
+
+R0 VBIAS 8 27
+.ends dcsfq
+
+
+* D-Flip Flop Element
+.subckt dff_il IN OUT CLK VBIAS
+B0 7 8 15 jjr ics=150uA
+RS0 7 8 4.6
+B1 10 9 16 jjr ics=175uA
+RS1 10 9 3.9
+B2 9 12 17 jjr ics=200uA
+RS2 9 12 3.4
+B3 8 13 18 jjr ics=250uA
+RS3 8 13 2.7
+B4 11 14 19 jjr ics=200uA
+RS4 11 14 3.4
+LP0 12 0 0.22pH
+LP1 13 0 0.50pH
+LP2 14 0 0.26pH
+LT0 CLK 7 2.31pH
+LT1 IN 10 2.50pH
+LT2 9 5 1.59pH
+LT3 5 8 5.48pH
+LT4 8 6 2.62pH
+LT5 6 11 1.24pH
+LT6 11 OUT 2.02pH
+R0 VBIAS 5 43
+R1 VBIAS 6 74
+.ends dff_il
+
+
+* Merge Element
+.subckt merge IN1 IN2 OUT VBIAS
+B0 6 7 16 jjr ics=250uA
+RS0 6 7 2.7
+B1 8 10 17 jjr ics=224uA
+*RS1 8 10 3.4
+B2 10 12 18 jjr ics=224uA
+*RS2 10 12 3.4
+B3 11 13 19 jjr ics=250uA
+RS3 11 13 2.7
+B4 14 15 20 jjr ics=250uA
+RS4 14 15 2.7
+
+L0 IN1 7 6pH
+L1 5 11 2.6pH
+L2 11 OUT 2pH
+L3 IN2 14 6pH
+
+LP0 0 6 .03pH
+LP1 7 8 .66pH
+LP2 9 5 .13pH
+LP3 10 5 .2pH
+LP4 12 14 .66pH
+LP5 13 0 .03pH
+LP6 15 0 .03pH
+
+R0 VBIAS 9 20
+.ends merge
+
+
+* Splitter Element
+.subckt split IN OUT1 OUT2 VBIAS
+B0 2 0 100 jjr ics=355uA
+R0 2 0 1.9
+B1 7 0 101 jjr ics=250uA
+R2 7 0 2.7
+B2 9 0 102 jjr ics=250uA
+R3 9 0 2.7
+
+L0 IN 1 0.8p
+L1 1 3 1.2p
+L2 3 5 0.05p
+L3 5 6 1.6p
+L4 6 OUT1 1.98p
+L5 5 8 1.6p
+L6 8 OUT2 1.98p
+
+LP0 1 2 0.05p
+LP1 4 3 0.13p
+LP2 6 7 0.05p
+LP3 8 9 0.05p
+
+R1 VBIAS 4 16.7
+.ends split
+
+
+.subckt cin IN1 IN2 CLK OUT VBIAS
+* Clock signal is 
+X5 CLK CLK1 CLK2 VBIAS split
+
+L0 IN1 40 2p
+L1 41 43 10p
+L2 CLK1 42 2p
+L3 43 47 4p
+L4 IN2 50 2p
+L5 44 46 10p
+L6 CLK2 45 2p
+L7 46 48 4p
+L8 49 OUT 1.5p
+
+B0 40 41 100 jjr ics=175uA
+B1 41 0 101 jjr ics=175uA
+B2 43 0 102 jjr ics=250uA
+B3 42 43 103 jjr ics=175uA
+B4 47 49 104 jjr ics=175uA
+B5 50 44 105 jjr ics=175uA
+B6 44 0 106 jjr ics=175uA
+B7 46 0 107 jjr ics=250uA
+B8 45 46 108 jjr ics=175uA
+B9 48 49 109 jjr ics=175uA
+B10 49 0 110 jjr ics=350uA
+
+R0 VBIAS 41 80
+R1 VBIAS 44 80
+R2 VBIAS 49 40
+
+RS0 40 41 3.9
+RS1 41 0 3.9
+RS2 43 0 2.7
+RS3 42 43 3.9
+RS4 47 49 3.9
+RS5 50 44 3.9
+RS6 44 0 3.9
+RS7 46 0 2.7
+RS8 45 46 3.9
+RS9 48 49 3.9
+RS10 49 0 1.9
+.ends cin
+
+
+
+* Single JTL Circuit Element
+.subckt jtl IN OUT VBIAS
+B0 5 7 9 jjr ics=250uA
+RS0 5 7 2.7
+B1 6 8 10 jjr ics=250uA
+RS1 6 8 2.7
+LP0 7 0 .1pH
+LP1 8 0 .1pH
+LT0 IN 5 2.1pH
+LT1 5 4 2.1pH
+LT2 4 6 2.1pH
+LT3 6 OUT 2.1pH
+R0 VBIAS 4 29
+.ends jtl
+
+* Model Definition
+.model jjr jj(level=2)
