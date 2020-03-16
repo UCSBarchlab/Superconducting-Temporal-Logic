@@ -1,0 +1,68 @@
+Commands for plotting each circuit as shown in the paper (some accelerators, like the racetree, require in-circuit modifications to match the desired input times):
+
+To start WRSPICE:
+BASH COMMANDS
+
+export wrspice=/usr/local/xictools/wrspice/bin/wrspice
+$wrspice -m /usr/local/xictools/wrspice.current/devkit/examples/jj/module_dist/jj.so
+
+
+
+With WRSPICE Running:
+Use GUI to select .cir file. Double-click. 
+
+*NOTE 1: Some circuits use variables that aren't recognized by WRSPICE on the first double-click, which may show up in a warning window. Dismiss the window and double-click on the circuit again.
+
+*NOTE 2: The same 2x double-click must be repeated each time the circuit is modified and re-simulated or if it is re-selected after choosing another circuit.
+
+
+In WRSPICE Unix-like Interface, type the following commands (unique to each circuit):
+
+For Delay:
+run
+plot v(JTL1) v(JTL2) v(JTL3) v(JTL4)
+
+
+For Inhibit:
+run
+plot v(a) v(b) v(OUT)
+
+
+For Last Arrival:
+run
+plot v(IN1) v(IN2) v(OUT)
+
+
+For Coincidence:
+run
+plot v(IN1) v(IN2) v(CLK) v(OUT)
+
+
+For FA_stateful:
+run
+plot v(IN1) v(IN2) v(CLK) v(OUT)
+
+
+For FA_stateless:
+run
+plot v(IN1) v(IN2) v(OUT)
+
+
+For Delay Function:
+run
+plot v(IN1) v(IN2) v(IN3) v(OUT1) v(OUT2) v(OUT3) v(FIRST)
+
+
+For racetree (camera-ready version with additional pulse-shaping):
+run
+plot v(REF) v(IN1) v(IN2) v(UB) v(OUTA) v(OUTB) v(OUTC) v(OUTD)
+
+
+For DNA, gat-act (both stateful and stateless ("nos") versions):
+run
+plot v(IN1) v(DEL11) v(MATCH21) v(INS32) v(MATCH33) v(MATCH44)
+
+
+For DNA, act-act (both stateful and stateless ("nos") versions):
+run
+plot v(IN1) v(MATCH11) v(MATCH22) v(MATCH33) v(MATCH44)
