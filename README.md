@@ -1,13 +1,11 @@
 # A Computational Temporal Logic for Superconducting Accelerators
 
-Description
+Superconducting logic offers the potential to perform com- putation at tremendous speeds and energy savings but a “se- mantic gap” lies between the level-driven logic traditional hardware designs accept as a foundation and the pulse-driven logic naturally supported by the most compelling supercon- ducting technologies. A pulse, unlike a level signal, will fire through a channel for only an instant. Arranging the network of superconducting components so that input pulses always arrive simultaneously to “logic gates” so one can maintain the illusion of Boolean-only evaluation is a significant en- gineering hurdle. In this paper, we explore computing in a new and more native tongue for superconducting logic: time of arrival. Building on recent work in delay-based compu- tations, we show that superconducting logic can naturally compute directly over temporal relationships between pulse arrivals, that the computational relationships between those pulse arrivals can be formalized through a functional exten- sion to a temporal predicate logic used in the verification community, and that the resulting architectures can operate asynchronously and describe real and useful computations. We verify our hypothesis through a combination of detailed analog circuit models, a formal analysis of our abstractions, and an evaluation in the context of several superconducting accelerators.
 
 ### Package Contents
 * *primitives/* RSFQ implementations of (and testbench files for) our primary temporal operators. 
 * *accelerators/* RSFQ implementations of (and testbench files for) our proof-of-concept accelerators.
 * *scripts/* Scripts to easily run our experiments.
-
-### Dependencies
  
 ### Example Usage
 Install WRCAD xictools package (http://www.wrcad.com/).
