@@ -3,9 +3,12 @@
 Description
 
 ### Package Contents
+* *primitives/* RSFQ implementations of (and testbench files for) our primary temporal operators. 
+* *accelerators/* RSFQ implementations of (and testbench files for) our proof-of-concept accelerators.
+* *scripts/* Scripts to easily run our experiments.
 
 ### Dependencies
-
+ 
 ### Example Usage
 
 ### References:
