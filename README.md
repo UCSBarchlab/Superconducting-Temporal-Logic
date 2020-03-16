@@ -14,7 +14,7 @@ For more information and a detailed description of this work please read our pap
 ### Package Contents
 * *Primitives/* RSFQ implementations of (and testbench files for) our primary temporal operators. 
 * *Accelerators/* RSFQ implementations of (and testbench files for) our proof-of-concept accelerators.
-* *Scripts/* Scripts to easily run our experiments.
+* *Scripts/* scripts to easily run our experiments.
  
 ### Example Usage
 Install WRCAD xictools package (http://www.wrcad.com/).
