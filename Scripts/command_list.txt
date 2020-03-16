@@ -48,7 +48,7 @@ run
 plot v(IN1) v(IN2) v(OUT)
 
 
-For Delay Function:
+For Arbitrary Function:
 run
 plot v(IN1) v(IN2) v(IN3) v(OUT1) v(OUT2) v(OUT3) v(FIRST)
 
