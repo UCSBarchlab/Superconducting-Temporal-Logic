@@ -29,7 +29,7 @@ plot v(JTL1) v(JTL2) v(JTL3) v(JTL4)
 
 
 ### References:
-Georgios Tzimpragos, Dilip Vasudevan, Nestan Tsiskaridze, George Michelogiannakis, Advait Madhavan, Jennifer Volk, John Shalf, and Timothy Sherwood. A Computational Temporal Logic for Superconducting Accelerators Proceedings of the 25th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS) March 2020. Lausanne, Switzerland.
+[1] Georgios Tzimpragos, Dilip Vasudevan, Nestan Tsiskaridze, George Michelogiannakis, Advait Madhavan, Jennifer Volk, John Shalf, and Timothy Sherwood. A Computational Temporal Logic for Superconducting Accelerators Proceedings of the 25th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS) March 2020. Lausanne, Switzerland.
 
 ### Others:
 Link to the Race Logic Github: https://github.com/UCSBarchlab/RaceLogic
