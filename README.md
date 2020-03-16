@@ -20,4 +20,4 @@ Link to the Race Logic Github: https://github.com/UCSBarchlab/RaceLogic
 ### Contact:
 For general questions feel free to reach out to [Archlab @ UCSB](https://www.arch.cs.ucsb.edu/).
 
-For immediate help with Race Logic and PyRTL, contact George (gtzimpragos@ucsb.edu) and Jennifer (jevolk@ucsb.edu).
+For immediate help with our *Computational Temporal Logic* and *Superconducting Temporal Accelerators", please contact George (gtzimpragos@ucsb.edu) and Jennifer (jevolk@ucsb.edu).
