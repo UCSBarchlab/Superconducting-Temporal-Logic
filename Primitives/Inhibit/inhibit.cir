@@ -1,4 +1,12 @@
-#! Inhibit Circuit
+#! INHIBIT Circuit
+
+* The INHIBIT operator receives two input signals: one inhibiting and one data signal. 
+* An output pulse is emitted only if the signal arrives before the inhibiting one. 
+
+* To implement INHIBIT in RSFQ we use a single INVERTER. According to the INVERTER’s specification, if a data pulse arrives, 
+* the next clock pulse reads out “0”; otherwise, it reads out “1”. Thus, if we route the data signal to the inverter’s clock 
+* port and the inhibiting signal to its data port, this component will act exactly as an INHIBIT operator for our logic.
+
 
 * Testbench
 .tran 1p 0.8n
