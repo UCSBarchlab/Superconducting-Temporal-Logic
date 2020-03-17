@@ -2,7 +2,7 @@
 
 * We implement a decision tree consisting of three nodes: n0, n1, n2
 * Tree specs: n0: x<3, n1: x<2, n2: y<2
-* Testbenches: (a) x=2, y=3, (b) x=4, y=1
+* Testbenches: (a) x=2, y=3 (lines 17 and 20), (b) x=4, y=1 (lines 18 and 21)
 
 * Testbench
 .tran 1p 0.3n
