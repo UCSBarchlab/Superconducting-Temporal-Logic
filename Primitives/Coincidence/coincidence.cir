@@ -1,4 +1,7 @@
-#! Coincidence (AND) Circuit.
+#! COINCIDENCE Circuit.
+
+* A COINCIDENCE gate is supposed to fire only if its inputs arrive simultaneously.
+* For its implementation, we use an RSFQ AND gate
 
 
 * Testbench
@@ -26,7 +29,6 @@ X3 22 IN2 VCC jtl
 X4 31 CLK VCC dcsfq
 
 X7 IN1 IN2 CLK OUT VCC cin
-
 
 
 * RSFQ Pulse Generation
