@@ -1,7 +1,7 @@
 #! COINCIDENCE Circuit.
 
 * A COINCIDENCE gate is supposed to fire only if its inputs arrive simultaneously.
-* For its implementation, we use an RSFQ AND gate
+* For its implementation, we use an RSFQ AND gate.
 
 
 * Testbench
