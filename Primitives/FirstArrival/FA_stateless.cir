@@ -2,7 +2,7 @@
 
 * In our temporal logic (under the assumption that shorter delays represent smaller values), First Arrival circuit realizes MIN function.
 
-* For its stateless implementation, all needed is a Merge element.
+* For its stateless implementation, all that is needed is a Merge element.
 
 * In contrast to its stateful version, the existing implementation generates multiple output events, which "violates" one of the main 
 * Race Logic constraints for at most one event per "wire". In some cases though, such a relaxation may not cause any malfunction and lead
