@@ -1,4 +1,7 @@
-#! Delay circuit
+#! DELAY circuit
+
+* In our temporal logic, delaying an event by a fixed amount of time corresponds to CONSTANT ADDITION.
+* For its implementation, we rely on JTLs.
 
 .tran 1p 0.5n
 .options ysep
