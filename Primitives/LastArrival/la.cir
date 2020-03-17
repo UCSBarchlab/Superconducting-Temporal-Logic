@@ -1,6 +1,6 @@
 #! Last Arrival Circuit
 
-* In our temporal logic (under the assumption that a longer delay represent a larger magnitude), Last Arrival circuit realizes MAX function.
+* In our temporal logic (under the assumption that a longer delay represents a larger magnitude), Last Arrival circuit realizes MAX function.
 
 * For the implementation of the Last Arrival gate, a C- element is used.
 
