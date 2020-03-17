@@ -1,4 +1,11 @@
-#! DNA Accelerator
+#! String Sequencing Accelerator 
+
+* For the implementation of each cell of the systolic array, we use stateless rather than stateful FirstArrival gates.
+* Replacing stateful with stateless gates is not always a safe choice. However, in the specific case it does not cause
+* any malfuction, while improving both area and latency.
+
+* Strings compared: P=ACT, Q=GAT.
+
 
 * Testbench
 .tran 1p 0.6n
@@ -27,16 +34,16 @@ X1 4 IN1 VCC dcsfq
 
 
 * start cell circuit
-X11 IN2 IN1 IN3 lns11 MATCH11 DEL11 VCC VCC cell
+X11 IN2 IN1 IN3 lns11 MATCH11 DEL11 VCC VNM cell
 X12 lns11 VNM VNM INS12 MATCH12 DEL12 VCC VNM cell
 X13 INS12 VNM VNM INS13 MATCH13 DEL13 VCC VNM cell
 X14 INS13 VNM VNM INS14 MATCH14 DEL14 VCC VNM cell
 
-X21 VNM VNM DEL11 INS21 MATCH21 DEL21 VCC VNM cell
+X21 VNM VNM DEL11 INS21 MATCH21 DEL21 VCC VCC cell
 X31 VNM VNM DEL21 INS31 MATCH31 DEL31 VCC VNM cell
 X41 VNM VNM DEL31 INS41 MATCH41 DEL41 VCC VNM cell
 
-X22 INS21 MATCH11 DEL12 INS22 MATCH22 DEL22 VCC VCC cell
+X22 INS21 MATCH11 DEL12 INS22 MATCH22 DEL22 VCC VNM cell
 X23 INS22 MATCH12 DEL13 INS23 MATCH23 DEL23 VCC VNM cell
 X24 INS23 MATCH13 DEL14 INS24 MATCH24 DEL24 VCC VNM cell
 

@@ -1,4 +1,8 @@
-#! DNA Accelerator - ACT-ACT
+#! String Sequencing Accelerator 
+
+* For the implementation of each cell of the systolic array, we use stateful rather than stateless FirstArrival gates.
+
+* Strings compared: P=ACT, Q=ACT.
 
 * Testbench
 .tran 1p 0.6n

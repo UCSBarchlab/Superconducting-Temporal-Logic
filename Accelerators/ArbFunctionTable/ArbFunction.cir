@@ -1,5 +1,14 @@
 #! Arbitrary Function Table Accelerator
 
+* Function Table specs:
+* row 0: in_a=0, in_b=1, in_c=2 -> out=3
+* row 1: in_a=1, in_b=0, in_c=inf(no pulse) -> out=2
+* row 2: in_a=2, in_b=2, in_c=0 -> out=2
+
+* Implementation specs: +1 = 50ps
+* Test inputs: in_a=0, in_b=1, in_c=2
+ 
+
 * Testbench
 .tran 1p 0.5n
 .options ysep
