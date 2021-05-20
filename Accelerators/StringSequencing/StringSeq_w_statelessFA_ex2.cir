@@ -1,5 +1,6 @@
 #! String Sequencing Accelerator 
-
+* Edit 06 May 2021: Inserted shunt resistor for serial JJs in merge gate for consistency with the rest of the primitives.
+*                   Does not alter functionality.
 * For the implementation of each cell of the systolic array, we use stateless rather than stateful FirstArrival gates.
 * Replacing stateful with stateless gates is not always a safe choice. However, in the specific case it does not cause
 * any malfuction, while improving both area and latency.
@@ -153,9 +154,9 @@ R1 VBIAS 6 74
 B0 6 7 16 jjr ics=250uA
 RS0 6 7 2.7
 B1 8 10 17 jjr ics=224uA
-*RS1 8 10 3.4
+RS1 8 10 3.4
 B2 10 12 18 jjr ics=224uA
-*RS2 10 12 3.4
+RS2 10 12 3.4
 B3 11 13 19 jjr ics=250uA
 RS3 11 13 2.7
 B4 14 15 20 jjr ics=250uA
